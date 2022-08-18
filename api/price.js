@@ -1,10 +1,10 @@
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 
 export default async function handler(request, response) {
-  const tibberResponse = await fetch('https://api.tibber.com/v1-beta/gql', {
-    method: 'POST',
+  const tibberResponse = await fetch("https://api.tibber.com/v1-beta/gql", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.TIBBER_ACCESS_TOKEN}`,
     },
     body: `{
@@ -15,7 +15,10 @@ export default async function handler(request, response) {
 
   const data = await tibberResponse.json();
 
-  let priceData = data.data.viewer.homes[0].currentSubscription.priceInfo.today;
+  let priceData = [
+    ...data.data.viewer.homes[0].currentSubscription.priceInfo.today,
+    ...data.data.viewer.homes[0].currentSubscription.priceInfo.tomorrow,
+  ];
 
   response.status(200).json(priceData);
 }
