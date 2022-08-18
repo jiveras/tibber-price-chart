@@ -1,11 +1,10 @@
-import fetch from 'node-fetch'
-
+import fetch from 'node-fetch';
 
 export default async function handler(request, response) {
-  const tibberResponse = await fetch("https://api.tibber.com/v1-beta/gql", {
-    method: "POST",
+  const tibberResponse = await fetch('https://api.tibber.com/v1-beta/gql', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${process.env.TIBBER_ACCESS_TOKEN}`,
     },
     body: `{
