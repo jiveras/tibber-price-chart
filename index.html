@@ -1,76 +1,117 @@
 <html>
+   <head>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+   </head>
+   <style>
+      .wrapper,
+      html,
+      body {
+         height: 100%;
+         margin: 0;
+      }
 
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-</head>
-<style>
-    .wrapper,
-    html,
-    body {
-        height: 100%;
-        margin: 0;
-    }
+      .wrapper {
+         display: flex;
+         flex-direction: column;
+      }
 
-    .wrapper {
-        display: flex;
-        flex-direction: column;
-    }
+      .graph {
+         flex: 1 1;
+      }
+   </style>
 
-    .graph {
-        flex: 1 1;
-    }
-</style>
+   <body>
+      <div class="wrapper">
+         <div class="graph" id="graph">
+            <canvas id="myChart" style="width: 100%; height: 100%"></canvas>
+         </div>
+      </div>
+   </body>
+   <script>
+      let myChart;
 
-<body>
-    <div class="wrapper">
-        <div class="graph" id="graph">
-            <canvas id="myChart" style="width:100%;height:100%;"></canvas>
-        </div>
-    </div>
-</body>
-<script>
-    let myChart;
+      // async function updateGraph() {
+      //     const response = await fetch('/api/price')
 
-    async function updateGraph() {
-        const response = await fetch('/api/price')
+      //     response.json().then((priceData) => {
+      //         let labels = priceData.map(x => x.startsAt.slice(11, 16));
+      //         let totalPrice = priceData.map(x => x.total)
 
-        response.json().then((priceData) => {
-            let labels = priceData.map(x => x.startsAt.slice(11, 16));
-            let totalPrice = priceData.map(x => x.total)
+      //         const chartData = {
+      //             labels: labels,
+      //             datasets: [{
+      //                 label: "Elpriser",
+      //                 data: totalPrice,
+      //                 borderColor: 'rgb(75, 192, 192)',
+      //                 stepped: true
+      //             }]
+      //         }
+
+      //         const config = {
+      //             type: 'line',
+      //             data: chartData,
+      //             options: {
+      //                 responsive: true,
+      //                 maintainAspectRatio: false,
+      //             },
+      //         }
+
+      //         if (!myChart) {
+      //             console.log("Initialize new chart")
+      //             myChart = new Chart(document.getElementById('myChart'), config)
+      //         } else {
+      //             console.log("Update existing chart")
+      //             myChart.data.datasets[0].data.pop()
+      //             myChart.data.datasets[0].data.push(chartData)
+      //         }
+      //     })
+      // }
+
+      async function updateGraph() {
+         const xhr = new XMLHttpRequest();
+         xhr.responseType = "json";
+         xhr.open("GET", "/api/price");
+         xhr.onload = () => {
+            let priceData = xhr.response;
+
+            let labels = priceData.map((x) => x.startsAt.slice(11, 16));
+            let totalPrice = priceData.map((x) => x.total);
 
             const chartData = {
-                labels: labels,
-                datasets: [{
-                    label: "Elpriser",
-                    data: totalPrice,
-                    borderColor: 'rgb(75, 192, 192)',
-                    stepped: true
-                }]
-            }
+               labels: labels,
+               datasets: [
+                  {
+                     label: "Elpriser",
+                     data: totalPrice,
+                     borderColor: "rgb(75, 192, 192)",
+                     stepped: true,
+                  },
+               ],
+            };
 
             const config = {
-                type: 'line',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                },
-            }
+               type: "line",
+               data: chartData,
+               options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+               },
+            };
 
             if (!myChart) {
-                console.log("Initialize new chart")
-                myChart = new Chart(document.getElementById('myChart'), config)
+               console.log("Initialize new chart");
+               myChart = new Chart(document.getElementById("myChart"), config);
             } else {
-                console.log("Update existing chart")
-                myChart.data.datasets[0].data.pop()
-                myChart.data.datasets[0].data.push(chartData)
+               console.log("Update existing chart");
+               myChart.data.datasets[0].data.pop();
+               myChart.data.datasets[0].data.push(chartData);
             }
-        })
-    }
+         };
+         xhr.send();
+      }
 
-    updateGraph()
+      updateGraph();
 
-    setInterval(updateGraph, 10 * 60 * 1000)
-</script>
-
+      setInterval(updateGraph, 10 * 60 * 1000);
+   </script>
 </html>
