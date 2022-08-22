@@ -1,120 +1,106 @@
 <html>
-   <head>
-      <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script> -->
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-   </head>
-   <style>
-      .wrapper,
-      html,
-      body {
-         height: 100%;
-         margin: 0;
-      }
+    <head>
+        <title>Elpriser</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 
-      .wrapper {
-         display: flex;
-         flex-direction: column;
-      }
+        <style>
+            .wrapper,
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+            }
 
-      .graph {
-         flex: 1 1;
-      }
-   </style>
+            .wrapper {
+                display: flex;
+                flex-direction: column;
+            }
 
-   <body>
-      <div class="wrapper">
-         <div class="graph" id="graph">
-            <canvas id="myChart" style="width: 100%; height: 100%"></canvas>
-         </div>
-      </div>
-   </body>
-   <script>
-      let myChart;
+            .graph {
+                flex: 1 1;
+            }
+        </style>
+    </head>
 
-      // async function updateGraph() {
-      //     const response = await fetch('/api/price')
+    <body>
+        <div class="wrapper">
+            <pre id="lastUpdate"></pre>
+            <div class="graph" id="graph">
+                <canvas id="myChart" style="width: 100%; height: 100%"></canvas>
+            </div>
+        </div>
+    </body>
 
-      //     response.json().then((priceData) => {
-      //         let labels = priceData.map(x => x.startsAt.slice(11, 16));
-      //         let totalPrice = priceData.map(x => x.total)
+    <script type="text/javascript">
+        var myChart = null;
+        var priceData = null;
 
-      //         const chartData = {
-      //             labels: labels,
-      //             datasets: [{
-      //                 label: "Elpriser",
-      //                 data: totalPrice,
-      //                 borderColor: 'rgb(75, 192, 192)',
-      //                 stepped: true
-      //             }]
-      //         }
+        function updatePriceData() {
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = "json";
+            xhr.open("GET", "/api/price");
+            xhr.onload = function () {
+                priceData = this.response;
 
-      //         const config = {
-      //             type: 'line',
-      //             data: chartData,
-      //             options: {
-      //                 responsive: true,
-      //                 maintainAspectRatio: false,
-      //             },
-      //         }
+                updateGraph();
+            };
+            xhr.send();
+        }
 
-      //         if (!myChart) {
-      //             console.log("Initialize new chart")
-      //             myChart = new Chart(document.getElementById('myChart'), config)
-      //         } else {
-      //             console.log("Update existing chart")
-      //             myChart.data.datasets[0].data.pop()
-      //             myChart.data.datasets[0].data.push(chartData)
-      //         }
-      //     })
-      // }
+        function updateGraph() {
+            c.innerHTML = new Date().toTimeString();
+            var currentHour = new Date().toTimeString().slice(0, 2);
 
-      async function updateGraph() {
-         const xhr = new XMLHttpRequest();
-         xhr.responseType = "json";
-         xhr.open("GET", "/api/price");
-         xhr.onload = () => {
-            let priceData = xhr.response;
+            var labels = [];
+            var backgroundColors = [];
+            for (var i = 0; i < priceData.length; i++) {
+                labels.push(priceData[i].startsAt.slice(11, 16));
 
-            let labels = priceData.map((x) => x.startsAt.slice(11, 16));
-            let totalPrice = priceData.map((x) => x.total);
+                if (labels[i].slice(0, 2) == currentHour) {
+                    backgroundColors.push("rgba(54, 255, 132, 0.2)");
+                } else [backgroundColors.push("rgba(54, 162, 235, 0.2)")];
+            }
 
-            const chartData = {
-               labels: labels,
-               datasets: [
-                  {
-                     label: "Elpriser",
-                     data: totalPrice,
-                     borderColor: "rgb(75, 192, 192)",
-                     steppedLine: true,
-                     
-                  lineTension: 0,   
-                  },
-               ],
+            var totalPrice = [];
+            for (var i = 0; i < priceData.length; i++) {
+                totalPrice.push(priceData[i].total);
+            }
+
+            var chartData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Elpriser",
+                        data: totalPrice,
+                        borderColor: "rgba(0, 0, 0, 1)",
+                        backgroundColor: backgroundColors,
+                        borderWidth: 1,
+                        steppedLine: true,
+
+                        lineTension: 0,
+                    },
+                ],
             };
 
-            const config = {
-               type: "line",
-               data: chartData,
-               options: {
-                  //responsive: true,
-                  //maintainAspectRatio: false,
-               },
+            var config = {
+                type: "bar",
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                },
             };
 
             if (!myChart) {
-               console.log("Initialize new chart");
-               myChart = new Chart(document.getElementById("myChart"), config);
+                myChart = new Chart(document.getElementById("myChart"), config);
             } else {
-               console.log("Update existing chart");
-               myChart.data.datasets[0].data.pop();
-               myChart.data.datasets[0].data.push(chartData);
+                myChart.data.datasets[0].data.pop();
+                myChart.data.datasets[0].data.push(chartData);
             }
-         };
-         xhr.send();
-      }
+        }
 
-      updateGraph();
+        updatePriceData();
 
-      setInterval(updateGraph, 10 * 60 * 1000);
-   </script>
+        setInterval(updateGraph, 10 * 1000);
+    </script>
 </html>
