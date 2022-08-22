@@ -19,6 +19,13 @@
             .graph {
                 flex: 1 1;
             }
+
+            table {
+                font-size: x-large;
+            }
+            table td{
+                padding: 15px;
+            }
         </style>
     </head>
 
@@ -31,7 +38,7 @@
                     onclick="toggleTableChart()"
                 ></canvas>
             </div>
-            <div id="table" style="display: none">
+            <div id="table" style="display: none; margin: auto;">
                 <h1>Aktuellt pris: {{currentPrice}}</h1>
                 <table id="priceTable"></table>
                 <button onclick="toggleTableChart()">Graf</button>
@@ -53,7 +60,7 @@
                 tag: "dryer",
             },
             {
-                label: "Torkskåp",
+                label: "Torksk&aring;p",
                 kWh: 0.032,
                 tag: "dryer-box",
             },
@@ -61,12 +68,29 @@
 
         function updateTable() {
             var el = document.getElementById("table");
+            el.innerHTML = el.innerHTML.replace(
+                "{{currentPrice}}",
+                currentPrice.toFixed(2)
+            );
 
-            var tbl = document.getElementById("priceTable")
-            tbl.innerHTML = "<tr><th>Vad</th><th>kWh</th><th>Pris</th></tr>";
+            var tbl = document.getElementById("priceTable");
+            tbl.innerHTML = "";
 
-            for(var i=0 ; i<measures.length ; i++){
-                tbl.innerHTML += "<tr><td>" + measures[i].label + "</td><td>" + (measures[i].kWh * currentPrice).toFixed(2) + "kr</td></tr>"
+            for (var i = 0; i < measures.length; i++) {
+                r = tbl.insertRow(i);
+                c = r.insertCell(0);
+                c.innerHTML = measures[i].label;
+                c = r.insertCell(1);
+                c.innerHTML = measures[i].kWh;
+                c = r.insertCell(2);
+                c.innerHTML = (measures[i].kWh * currentPrice).toFixed(2) + "kr";
+
+                // tbl.innerHTML +=
+                //     "<tr><td>" +
+                //     measures[i].label +
+                //     "</td><td>" +
+                //     (measures[i].kWh * currentPrice).toFixed(2) +
+                //     "kr</td></tr>";
             }
         }
 
