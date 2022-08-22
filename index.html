@@ -25,7 +25,16 @@
     <body>
         <div class="wrapper">
             <div class="graph" id="graph">
-                <canvas id="myChart" style="width: 100%; height: 100%"></canvas>
+                <canvas
+                    id="myChart"
+                    style="width: 100%; height: 100%; display: block"
+                    onclick="toggleTableChart()"
+                ></canvas>
+            </div>
+            <div id="table" style="display: none">
+                <h1>Aktuellt pris: {{currentPrice}}</h1>
+                <table id="priceTable"></table>
+                <button onclick="toggleTableChart()">Graf</button>
             </div>
         </div>
     </body>
@@ -33,6 +42,49 @@
     <script type="text/javascript">
         var myChart = null;
         var priceData = null;
+        var currentPrice = 0;
+        var showChart = true;
+
+        var measures = [
+            { label: "Diskmaskin", kWh: 1.3, tag: "dishwasher" },
+            {
+                label: "Tumlare",
+                kWh: 1.5,
+                tag: "dryer",
+            },
+            {
+                label: "Torkskåp",
+                kWh: 0.032,
+                tag: "dryer-box",
+            },
+        ];
+
+        function updateTable() {
+            var el = document.getElementById("table");
+
+            var tbl = document.getElementById("priceTable")
+            tbl.innerHTML = "<tr><th>Vad</th><th>kWh</th><th>Pris</th></tr>";
+
+            for(var i=0 ; i<measures.length ; i++){
+                tbl.innerHTML += "<tr><td>" + measures[i].label + "</td><td>" + (measures[i].kWh * currentPrice).toFixed(2) + "kr</td></tr>"
+            }
+        }
+
+        function toggleTableChart() {
+            var chrt = document.getElementById("graph");
+            var tbl = document.getElementById("table");
+
+            updateTable();
+
+            if (showChart) {
+                chrt.style.display = "none";
+                tbl.style.display = "block";
+            } else {
+                chrt.style.display = "block";
+                tbl.style.display = "none";
+            }
+            showChart = !showChart;
+        }
 
         function updatePriceData() {
             var xhr = new XMLHttpRequest();
@@ -42,6 +94,7 @@
                 priceData = this.response;
 
                 updateGraph();
+                updateTable();
             };
             xhr.send();
         }
@@ -52,18 +105,25 @@
             var labels = [];
             var backgroundColors = [];
             var foundCurrentHour = false;
+            var currentHourIdx = 0;
+
             for (var i = 0; i < priceData.length; i++) {
                 labels.push(priceData[i].startsAt.slice(11, 16));
 
                 if (labels[i].slice(0, 2) == currentHour && !foundCurrentHour) {
                     backgroundColors.push("rgba(54, 255, 132, 0.2)");
                     foundCurrentHour = true;
+                    currentHourIdx = i;
                 } else [backgroundColors.push("rgba(54, 162, 235, 0.2)")];
             }
 
             var totalPrice = [];
             for (var i = 0; i < priceData.length; i++) {
                 totalPrice.push(priceData[i].total);
+
+                if (i == currentHourIdx) {
+                    currentPrice = priceData[i].total;
+                }
             }
 
             labels.push("00:00");
@@ -73,7 +133,10 @@
                 labels: labels,
                 datasets: [
                     {
-                        label: "Elpriser (" + new Date().toTimeString().slice(0,8) + ")",
+                        label:
+                            "Elpriser (" +
+                            new Date().toTimeString().slice(0, 8) +
+                            ")",
                         data: totalPrice,
                         borderColor: "rgba(0, 0, 0, 1)",
                         backgroundColor: backgroundColors,
