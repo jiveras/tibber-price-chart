@@ -1,6 +1,7 @@
 <html>
    <head>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+      <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script> -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
    </head>
    <style>
       .wrapper,
@@ -84,7 +85,9 @@
                      label: "Elpriser",
                      data: totalPrice,
                      borderColor: "rgb(75, 192, 192)",
-                     stepped: true,
+                     steppedLine: true,
+                     
+                  lineTension: 0,   
                   },
                ],
             };
@@ -93,8 +96,8 @@
                type: "line",
                data: chartData,
                options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
+                  //responsive: true,
+                  //maintainAspectRatio: false,
                },
             };
 
