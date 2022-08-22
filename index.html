@@ -22,9 +22,14 @@
 
             table {
                 font-size: x-large;
+                font-family: "Trebuchet MS", "Lucida Sans Unicode",
+                    "Lucida Grande", "Lucida Sans", Arial, sans-serif;
             }
-            table td{
+            table td {
                 padding: 15px;
+            }
+            button {
+                padding: 25px;
             }
         </style>
     </head>
@@ -38,7 +43,7 @@
                     onclick="toggleTableChart()"
                 ></canvas>
             </div>
-            <div id="table" style="display: none; margin: auto;">
+            <div id="table" style="display: none; margin: auto">
                 <h1>Aktuellt pris: {{currentPrice}}</h1>
                 <table id="priceTable"></table>
                 <button onclick="toggleTableChart()">Graf</button>
@@ -81,16 +86,11 @@
                 c = r.insertCell(0);
                 c.innerHTML = measures[i].label;
                 c = r.insertCell(1);
-                c.innerHTML = measures[i].kWh;
+                c.innerHTML = measures[i].kWh + "kWh";
+                c.style.textAlign = "right";
                 c = r.insertCell(2);
                 c.innerHTML = (measures[i].kWh * currentPrice).toFixed(2) + "kr";
-
-                // tbl.innerHTML +=
-                //     "<tr><td>" +
-                //     measures[i].label +
-                //     "</td><td>" +
-                //     (measures[i].kWh * currentPrice).toFixed(2) +
-                //     "kr</td></tr>";
+                c.style.textAlign = "right";
             }
         }
 
