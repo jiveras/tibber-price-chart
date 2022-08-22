@@ -73,7 +73,7 @@
                 labels: labels,
                 datasets: [
                     {
-                        label: "Elpriser",
+                        label: "Elpriser (" + new Date().toTimeString().slice(0,8) + ")",
                         data: totalPrice,
                         borderColor: "rgba(0, 0, 0, 1)",
                         backgroundColor: backgroundColors,
@@ -126,13 +126,13 @@
             if (!myChart) {
                 myChart = new Chart(document.getElementById("myChart"), config);
             } else {
-                myChart.data.datasets[0].data.pop();
-                myChart.data.datasets[0].data.push(chartData);
+                myChart.data = chartData;
+                myChart.update();
             }
         }
 
         updatePriceData();
 
-        setInterval(updateGraph, 10 * 1000);
+        setInterval(updateGraph, 15 * 10 * 1000);
     </script>
 </html>
