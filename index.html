@@ -24,7 +24,6 @@
 
     <body>
         <div class="wrapper">
-            <pre id="lastUpdate"></pre>
             <div class="graph" id="graph">
                 <canvas id="myChart" style="width: 100%; height: 100%"></canvas>
             </div>
@@ -48,7 +47,6 @@
         }
 
         function updateGraph() {
-            c.innerHTML = new Date().toTimeString();
             var currentHour = new Date().toTimeString().slice(0, 2);
 
             var labels = [];
@@ -65,6 +63,9 @@
             for (var i = 0; i < priceData.length; i++) {
                 totalPrice.push(priceData[i].total);
             }
+
+            labels.push("00:00");
+            totalPrice.push(0);
 
             var chartData = {
                 labels: labels,
@@ -88,6 +89,35 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+
+                    animation: {
+                        onComplete: function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(
+                                Chart.defaults.global.defaultFontSize,
+                                Chart.defaults.global.defaultFontStyle,
+                                Chart.defaults.global.defaultFontFamily
+                            );
+                            ctx.textAlign = "center";
+                            ctx.textBaseline = "bottom";
+
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta =
+                                    chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    if (data > 0) {
+                                        ctx.fillText(
+                                            data.toFixed(2),
+                                            bar._model.x,
+                                            bar._model.y - 5
+                                        );
+                                    }
+                                });
+                            });
+                        },
+                    },
                 },
             };
 
