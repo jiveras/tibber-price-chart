@@ -51,11 +51,13 @@
 
             var labels = [];
             var backgroundColors = [];
+            var foundCurrentHour = false;
             for (var i = 0; i < priceData.length; i++) {
                 labels.push(priceData[i].startsAt.slice(11, 16));
 
-                if (labels[i].slice(0, 2) == currentHour) {
+                if (labels[i].slice(0, 2) == currentHour && !foundCurrentHour) {
                     backgroundColors.push("rgba(54, 255, 132, 0.2)");
+                    foundCurrentHour = true;
                 } else [backgroundColors.push("rgba(54, 162, 235, 0.2)")];
             }
 
