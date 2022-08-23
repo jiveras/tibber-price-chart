@@ -49,7 +49,7 @@
             </div>
             <div id="table" style="display: none; margin: auto">
                 <div>
-                    <h1>Aktuellt pris: {{currentPrice}}</h1>
+                    <h1 id="currencPrice"></h1>
                     <table id="priceTable"></table>
                     <button onclick="toggleTableChart()">Graf</button>
                 </div>
@@ -108,10 +108,8 @@
 
         function updateTable() {
             var el = document.getElementById("table");
-            el.innerHTML = el.innerHTML.replace(
-                "{{currentPrice}}",
-                currentPrice.toFixed(2)
-            );
+           
+            document.getElementById("currentPrice").innerHTML = "Aktuellt pris: " + currentPrice.toFixed(2) + "kr"
 
             var tbl = document.getElementById("priceTable");
             tbl.innerHTML = "";
@@ -258,6 +256,6 @@
 
         updatePriceData();
 
-        setInterval(updateGraph, 15 * 10 * 1000);
+        setInterval(updatePriceData, 15 * 60 * 1000);
     </script>
 </html>
