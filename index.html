@@ -9,6 +9,9 @@
             body {
                 height: 100%;
                 margin: 0;
+                font-size: x-large;
+                font-family: "Trebuchet MS", "Lucida Sans Unicode",
+                    "Lucida Grande", "Lucida Sans", Arial, sans-serif;
             }
 
             .wrapper {
@@ -25,8 +28,6 @@
             }
             table {
                 font-size: x-large;
-                font-family: "Trebuchet MS", "Lucida Sans Unicode",
-                    "Lucida Grande", "Lucida Sans", Arial, sans-serif;
             }
             table td {
                 padding-right: 15px;
@@ -39,19 +40,17 @@
     </head>
 
     <body>
-        <div class="wrapper">
+        <div class="wrapper" onclick="toggleTableChart()">
             <div class="graph" id="graph">
                 <canvas
                     id="myChart"
                     style="width: 100%; height: 100%; display: block"
-                    onclick="toggleTableChart()"
                 ></canvas>
             </div>
             <div id="table" style="display: none; margin: auto">
                 <div>
                     <h1>Aktuellt pris: {{currentPrice}}</h1>
                     <table id="priceTable"></table>
-                    <button onclick="toggleTableChart()">Graf</button>
                 </div>
             </div>
         </div>
