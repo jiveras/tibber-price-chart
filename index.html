@@ -1,8 +1,8 @@
 <html>
     <head>
         <title>Elpriser</title>
-        
-        <meta name="apple-mobile-web-app-capable" content="yes">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 
@@ -110,8 +110,9 @@
 
         function updateTable() {
             var el = document.getElementById("table");
-           
-            document.getElementById("currentPrice").innerHTML = "Aktuellt pris: " + currentPrice.toFixed(2) + "kr"
+
+            document.getElementById("currentPrice").innerHTML =
+                "Aktuellt pris: " + currentPrice.toFixed(2) + "kr";
 
             var tbl = document.getElementById("priceTable");
             tbl.innerHTML = "";
@@ -216,6 +217,16 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+
+                    scales: {
+                        yAxes: [
+                            {
+                                ticks: {
+                                    max: 10,
+                                },
+                            },
+                        ],
+                    },
 
                     animation: {
                         onComplete: function () {
